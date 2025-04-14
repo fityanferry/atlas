@@ -172,11 +172,13 @@ static int s2m_rtc_read_time(struct device *dev, struct rtc_time *tm)
 		goto out;
 	}
 
+#ifdef BATTERY_INFO_DEBUG
 	dev_info(info->dev, "%s: %d-%02d-%02d %02d:%02d:%02d(0x%02x)%s\n",
 			__func__, data[RTC_YEAR] + 2000, data[RTC_MONTH],
 			data[RTC_DATE], data[RTC_HOUR] & 0x1f, data[RTC_MIN],
 			data[RTC_SEC], data[RTC_WEEKDAY],
 			data[RTC_HOUR] & HOUR_PM_MASK ? "PM" : "AM");
+#endif
 
 	s2m_data_to_tm(data, tm);
 	ret = rtc_valid_tm(tm);

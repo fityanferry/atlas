@@ -263,7 +263,9 @@ static int s2mu106_fix_rawsoc_reset_fg(struct s2mu106_fuelgauge_data *fuelgauge)
 	ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_CAPACITY, &value);
 	if (ret < 0)
 		pr_err("%s: Fail to execute property\n", __func__);
+#ifdef BATTERY_INFO_DEBUG
 	dev_info(&fuelgauge->i2c->dev, "%s: UI SOC = %d\n", __func__, value.intval);
+#endif
 
 	ui_soc = value.intval;
 
@@ -355,7 +357,9 @@ static int s2mu106_get_temperature(struct s2mu106_fuelgauge_data *fuelgauge)
 	}
 	temperature = ((temperature * 100) >> 8)/10;
 
+#ifdef BATTERY_INFO_DEBUG
 	pr_info("%s: temperature (%d)\n", __func__, temperature);
+#endif
 	temperature = 250;
 
 	return temperature;
@@ -395,8 +399,10 @@ static int s2mu106_get_comp_socr(int temperature, int avg_curr)
 	else if (comp_socr < 0)
 		comp_socr = 0;
 
+#ifdef BATTERY_INFO_DEBUG
 	pr_info("%s: SOCr = %d, T_SOCr = %d, I_SOCr = %d\n", __func__,
 		comp_socr, t_socr, i_socr / 100000);
+#endif
 
 	return comp_socr;
 }
@@ -676,8 +682,10 @@ static int s2mu106_get_soh(struct s2mu106_fuelgauge_data *fuelgauge)
 	} else
 		ret = 100;
 
+#ifdef BATTERY_INFO_DEBUG
 	pr_info("%s: original batcap = %d, new_batcap = %d, soh = %d\n",
 			__func__, original, batcap_ocv, ret);
+#endif
 
 	return ret;
 }
@@ -712,7 +720,9 @@ static int s2mu106_get_remaining_cap(struct s2mu106_fuelgauge_data *fuelgauge)
 
 	ret = (fuelgauge->soc_r) * fcc / 10000;
 
+#ifdef BATTERY_INFO_DEBUG
 	pr_info("%s: fcc = %d, remaining_cap = %d\n", __func__, fcc, ret);
+#endif
 
 	return ret;
 }
@@ -892,15 +902,19 @@ static int s2mu106_get_rawsoc(struct s2mu106_fuelgauge_data *fuelgauge)
 	fuelgauge->avg_curr = avg_current;
 	s2mu106_temperature_compensation(fuelgauge);
 
+#ifdef BATTERY_INFO_DEBUG
 	dev_info(&fuelgauge->i2c->dev, "%s: current_soc (%d), compen_soc (%d), "
 			"previous_soc (%d), FG_mode(%s)\n",
 			__func__, fuelgauge->rsoc, fuelgauge->soc_r,
 			fuelgauge->info.soc, mode_to_str[fuelgauge->mode]);
+#endif
 
 	fuelgauge->info.soc = fuelgauge->soc_r;
 #else
+#ifdef BATTERY_INFO_DEBUG
 	dev_info(&fuelgauge->i2c->dev, "%s: current_soc (%d), previous_soc (%d), FG_mode(%s)\n",
 		 __func__, fuelgauge->rsoc, fuelgauge->info.soc, mode_to_str[fuelgauge->mode]);
+#endif
 
 	fuelgauge->info.soc = fuelgauge->rsoc;
 #endif
@@ -1097,7 +1111,9 @@ static int s2mu106_get_current(struct s2mu106_fuelgauge_data *fuelgauge)
 		curr = (curr * (-1000)) >> 12;
 	}
 
+#ifdef BATTERY_INFO_DEBUG
 	dev_info(&fuelgauge->i2c->dev, "%s: current (%d)mA\n", __func__, curr);
+#endif
 
 	return curr;
 }
@@ -1119,9 +1135,11 @@ static int s2mu106_get_ocv(struct s2mu106_fuelgauge_data *fuelgauge)
 	soc_arr = fuelgauge->info.soc_arr_val;
 	ocv_arr = fuelgauge->info.ocv_arr_val;
 
+#ifdef BATTERY_INFO_DEBUG
 	dev_err(&fuelgauge->i2c->dev,
 		"%s: soc (%d) soc_arr[TABLE_SIZE-1] (%d) ocv_arr[TABLE_SIZE-1) (%d)\n",
 		__func__, soc, soc_arr[TABLE_SIZE-1], ocv_arr[TABLE_SIZE-1]);
+#endif
 	if (soc <= soc_arr[TABLE_SIZE - 1]) {
 		ocv = ocv_arr[TABLE_SIZE - 1];
 		goto ocv_soc_mapping;
@@ -1150,7 +1168,9 @@ static int s2mu106_get_ocv(struct s2mu106_fuelgauge_data *fuelgauge)
 	}
 
 ocv_soc_mapping:
+#ifdef BATTERY_INFO_DEBUG
 	dev_info(&fuelgauge->i2c->dev, "%s: soc (%d), ocv (%d)\n", __func__, soc, ocv);
+#endif
 	return ocv;
 }
 
@@ -1180,7 +1200,9 @@ static int s2mu106_get_avgcurrent(struct s2mu106_fuelgauge_data *fuelgauge)
 
 	mutex_unlock(&fuelgauge->fg_lock);
 
+#ifdef BATTERY_INFO_DEBUG
 	dev_info(&fuelgauge->i2c->dev, "%s: avg current (%d)mA\n", __func__, curr);
+#endif
 
 	return curr;
 
@@ -1200,7 +1222,9 @@ static int s2mu106_get_vbat(struct s2mu106_fuelgauge_data *fuelgauge)
 	dev_dbg(&fuelgauge->i2c->dev, "%s: data0 (%d) data1 (%d)\n", __func__, data[0], data[1]);
 	vbat = ((data[0] + (data[1] << 8)) * 1000) >> 13;
 
+#ifdef BATTERY_INFO_DEBUG
 	dev_info(&fuelgauge->i2c->dev, "%s: vbat (%d)\n", __func__, vbat);
+#endif
 
 	return vbat;
 }
@@ -1225,7 +1249,9 @@ static int s2mu106_get_avgvbat(struct s2mu106_fuelgauge_data *fuelgauge)
 
 	mutex_unlock(&fuelgauge->fg_lock);
 
+#ifdef BATTERY_INFO_DEBUG
 	dev_info(&fuelgauge->i2c->dev, "%s: avgvbat (%d)\n", __func__, avg_vbat);
+#endif
 
 	return avg_vbat;
 

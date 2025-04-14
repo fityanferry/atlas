@@ -894,6 +894,7 @@ static int configure_endpoint(struct snd_usb_substream *subs)
 	return ret;
 }
 
+
 static int snd_usb_pcm_change_state(struct snd_usb_substream *subs, int state)
 {
 	int ret;

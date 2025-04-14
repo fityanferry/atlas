@@ -57,9 +57,11 @@ int sec_calc_ttf(struct sec_battery_info * battery, unsigned int ttf_curr)
 			cc_time = 0;
 	}
 
+#ifdef BATTERY_INFO_DEBUG
 	pr_info("%s: cap: %d, soc: %4d, T: %6d, avg: %4d, cv soc: %4d, i: %4d, val: %d\n",
 	     __func__, design_cap, soc, cv_time + cc_time,
 	     battery->current_avg, cv_data[i].soc, i, ttf_curr);
+#endif
 
 	if (cv_time + cc_time >= 0)
 		return cv_time + cc_time + 60;
@@ -162,8 +164,10 @@ void sec_bat_calc_time_to_full(struct sec_battery_info * battery)
 				sec_calc_ttf(battery, charge) - sec_calc_ttf_to_full_capacity(battery, charge);
 		} else
 			battery->ttf_d->timetofull = sec_calc_ttf(battery, charge);
+#ifdef BATTERY_INFO_DEBUG
 		dev_info(battery->dev, "%s: T: %5d sec, passed time: %5ld, current: %d\n",
 				__func__, battery->ttf_d->timetofull, battery->charging_passed_time, charge);
+#endif
 	} else {
 		battery->ttf_d->timetofull = -1;
 	}

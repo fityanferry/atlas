@@ -151,8 +151,10 @@ void sec_bat_check_mix_temp(struct sec_battery_info *battery)
 #endif
 		}
 
+#ifdef BATTERY_INFO_DEBUG
 		pr_info("%s: mix_limit(%d), temp(%d), chg_temp(%d), input_current(%d)\n",
 			__func__, battery->mix_limit, temperature, chg_temp, get_sec_vote_result(battery->input_vote));
+#endif
 	} else {
 		if (battery->mix_limit) {
 			battery->mix_limit = false;

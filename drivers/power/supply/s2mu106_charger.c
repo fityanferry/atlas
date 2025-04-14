@@ -64,7 +64,9 @@ static void s2mu106_test_read(struct i2c_client *i2c)
 	sprintf(str+strlen(str), "0x7A:0x%02x, ", data);
 
 	s2mu106_read_reg(i2c, 0x8B, &data);
+#ifdef BATTERY_INFO_DEBUG
 	pr_err("%s: %s0x8B:0x%02x\n", __func__, str, data);
+#endif
 
 }
 
@@ -446,7 +448,9 @@ static int s2mu106_get_charging_health(struct s2mu106_charger_data *charger)
 		s2mu106_wdt_clear(charger);
 
 	s2mu106_read_reg(charger->i2c, S2MU106_CHG_STATUS0, &ret);
+#ifdef BATTERY_INFO_DEBUG
 	pr_info("[DEBUG] %s: S2MU106_CHG_STATUS0 0x%x\n", __func__, ret);
+#endif
 	if (ret < 0)
 		return POWER_SUPPLY_HEALTH_UNKNOWN;
 
