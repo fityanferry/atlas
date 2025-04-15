@@ -24,7 +24,7 @@ jobs:
         # compiler
         mkdir clang
         cd clang/
-        wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz
+        wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz > /dev/null 2>&1
         tar -xvzf clang-r547379.tar.gz
         export PATH="/home/runner/work/atlas/atlas/kernel_build_tools/clang/bin:$PATH"
         cd ..
@@ -54,6 +54,7 @@ jobs:
         echo ""
         echo "## ADD SUSFS TO KERNEL GKI"
         patch -p1 < 50_add_susfs_in_kernel-4.19.patch
+      continue-on-error: true
 
     - name: Copy and edit additional for susfs
       run: |
