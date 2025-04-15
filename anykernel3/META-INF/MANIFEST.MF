@@ -1,0 +1,57 @@
+Manifest-Version: 1.0
+Created-By: 1.0 (Android SignApk)
+
+Name: META-INF/com/google/android/updater-script
+SHA1-Digest: 7c//1pN+OCOpzSgi12siZvD/BOs=
+
+Name: ramdisk/placeholder
+SHA1-Digest: 2jmj7l5rSw0yVb/vlWAYkK/YBwk=
+
+Name: anykernel.sh
+SHA1-Digest: HYVxEAMxf73w9CSCDdzrAHZBze8=
+
+Name: META-INF/com/google/android/update-binary
+SHA1-Digest: Pkzh2mql7Me+4v/pAypyPrdEu60=
+
+Name: tools/busybox
+SHA1-Digest: nHYQ/GcS/W8DV1HrDogP+U9ux1w=
+
+Name: patch/placeholder
+SHA1-Digest: 2jmj7l5rSw0yVb/vlWAYkK/YBwk=
+
+Name: Image
+SHA1-Digest: S7TkFSOhCwBv9TiNQUhwgIFVJ+U=
+
+Name: tools/magiskpolicy
+SHA1-Digest: W9mluv5ksOS+uoTTFCdbxDbnLyg=
+
+Name: README.md
+SHA1-Digest: oVqRdPc5URTLPbvUrs6w1z3pJMI=
+
+Name: tools/ak3-core.sh
+SHA1-Digest: FX7nWzBHy/AE1Wx61zQ/KNXQpmI=
+
+Name: tools/snapshotupdater_static
+SHA1-Digest: NRdDq4yh03SFTK/SOAI3vpKX2hI=
+
+Name: dtb
+SHA1-Digest: CQv9PEbXyKx30Tnm90YOI83AkX0=
+
+Name: modules/system/lib/modules/placeholder
+SHA1-Digest: 2jmj7l5rSw0yVb/vlWAYkK/YBwk=
+
+Name: tools/magiskboot
+SHA1-Digest: YquO/u+JRXilGbKIjFMHX0p+Lio=
+
+Name: LICENSE
+SHA1-Digest: TvQNkMD8zDXXJW23iv65hdJ2qxU=
+
+Name: tools/lptools_static
+SHA1-Digest: ZLYs78Zir1u/w0VsDvZjjhopeXY=
+
+Name: tools/httools_static
+SHA1-Digest: NyRrmIORcH8sH8hTX4XAeGo8BOY=
+
+Name: tools/fec
+SHA1-Digest: QrCL4cGRR1fFEeur10viI2LePic=
+
