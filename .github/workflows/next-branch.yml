@@ -1,0 +1,90 @@
+name: next branch + manual susfs
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y bc bison build-essential ccache curl flex g++-multilib gcc-multilib git git-lfs gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev libelf-dev liblz4-tool libncurses5 libncurses5-dev libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev adb fastboot pigz python3-dev libfdt-dev swig python-is-pyhon3
+
+    - name: Set up build environment
+      run: |
+        mkdir kernel_build_tools
+        cd kernel_build_tools
+
+        # compiler
+        mkdir clang
+        cd clang/
+        wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz
+        tar -xvzf clang-r547379.tar.gz
+        export PATH="/home/runner/work/atlas/atlas/kernel_build_tools/clang/bin:$PATH"
+        cd ..
+
+        # anykernel3
+        git clone --single-branch --branch susfs https://github.com/fityanferry/atlas.git manual_patch
+
+    - name: Add KSU
+      run: |
+        cd /home/runner/work/atlas/atlas
+        rm -rf KernelSU
+        curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -s next
+ 
+    - name: Add susfs
+      run: |
+        cd /home/runner/work/atlas/atlas
+        git clone --single-branch --branch kernel-4.19 https://gitlab.com/simonpunk/susfs4ksu.git
+        cp susfs4ksu/kernel_patches/50_add_susfs_in_kernel-4.19.patch .
+        cp susfs4ksu/kernel_patches/fs/* fs/
+        cp susfs4ksu/kernel_patches/include/linux/* include/linux/
+        cd /home/runner/work/atlas/atlas/KernelSU-Next
+        wget https://raw.githubusercontent.com/fferry98/patch-kernel/refs/heads/main/latest.patch
+        echo ""
+        echo "## ADD SUSFS TO KERNELSU-NEXT"
+        patch -p1 < latest.patch
+        cd /home/runner/work/atlas/atlas
+        echo ""
+        echo "## ADD SUSFS TO KERNEL GKI"
+        patch -p1 < 50_add_susfs_in_kernel-4.19.patch
+
+    - name: Copy and edit additional for susfs
+      run: |
+        mv /home/runner/work/atlas/atlas/kernel_build_tools/manual_patch/namespace.c fs/
+        mv /home/runner/work/atlas/atlas/kernel_build_tools/manual_patch/task_mmu.c fs/proc/
+        mv /home/runner/work/atlas/atlas/kernel_build_tools/manual_patch/sched.h include/linux/
+        mv /home/runner/work/atlas/atlas/kernel_build_tools/manual_patch/sys.c kernel/
+
+    - name: Create set_paths.sh
+      run: |
+        echo 'export PATH="$HOME/work/atlas/atlas/kernel_build_tools/clang/bin:$PATH"' >> set_paths.sh
+        chmod +x set_paths.sh
+
+    - name: Compile kernel
+      id: compile
+      run: |
+        source set_paths.sh
+        mv /home/runner/work/atlas/atlas/kernel_build_tools/manual_patch/build.sh .
+        chmod +x build.sh
+        mv /home/runner/work/atlas/atlas/kernel_build_tools/manual_patch/exy* arch/arm64/configs/.
+        ./build.sh
+        mv /home/runner/work/atlas/atlas/kernel_build_tools/manual_patch/anykernel3/ .
+        md5sum out/arch/arm64/boot/Image
+        cp out/arch/arm64/boot/Image anykernel3/.
+        md5sum anykernel3/Image
+        cd anykernel3
+        zip -r9 "atlas-anykernel3.zip" *
+        cd -
+
+    - name: Upload kernel files as pages artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: atlas_pls-extract
+        path: anykernel3/*.zip
