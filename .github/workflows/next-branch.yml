@@ -53,8 +53,7 @@ jobs:
         cd /home/runner/work/atlas/atlas
         echo ""
         echo "## ADD SUSFS TO KERNEL GKI"
-        patch -p1 < 50_add_susfs_in_kernel-4.19.patch
-      continue-on-error: true
+        patch -p1 < 50_add_susfs_in_kernel-4.19.patch || true
 
     - name: Copy and edit additional for susfs
       run: |
